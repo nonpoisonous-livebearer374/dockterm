@@ -4,6 +4,7 @@ import { ok, err } from '@shared/result'
 import { inspectProject, initGitRepo } from '../../services/projectService'
 import { addRecentProject, getSettings } from '../../services/settingsService'
 import { startWatching } from '../../services/watcherService'
+import { setProjectRoot } from '../../services/projectContext'
 import type { Registrar } from '../register'
 
 const pathSchema = z.object({ path: z.string().min(1).max(4096) })
@@ -23,6 +24,7 @@ export function registerProjectHandlers(reg: Registrar): void {
   reg('project:open', pathSchema, async (req, event) => {
     try {
       const info = await inspectProject(req.path)
+      setProjectRoot(info.path)
       addRecentProject({ path: info.path, name: info.name, lastOpenedAt: Date.now() })
       const win = BrowserWindow.fromWebContents(event.sender)
       if (win) startWatching(info.path, win)

@@ -1,15 +1,38 @@
+import { useState } from 'react'
 import { GitBranchPlus } from 'lucide-react'
 import { useAppStore } from '../../state/useAppStore'
+import { useEditorStore } from '../../state/useEditorStore'
 import { TopBar } from './TopBar'
+import { Dock } from './Dock'
+import { Divider } from './Divider'
 import { TerminalView } from '../terminal/TerminalView'
+import { EditorPane } from '../editor/EditorPane'
+
+const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n))
 
 export function Shell() {
   const project = useAppStore((s) => s.project)
   const settings = useAppStore((s) => s.settings)
   const initGit = useAppStore((s) => s.initGitRepo)
+  const openPanel = useAppStore((s) => s.openPanel)
+  const miniTermOpen = useAppStore((s) => s.miniTermOpen)
+  const editorOpen = useEditorStore((s) => s.tabs.length > 0)
+
+  const [dockW, setDockW] = useState(260)
+  const [editorW, setEditorW] = useState(520)
+  const [miniH, setMiniH] = useState(200)
 
   if (!project) return null
   const t = settings?.terminal
+  const termProps = {
+    cwd: project.path,
+    fontFamily: t?.fontFamily ?? undefined,
+    fontSize: t?.fontSize,
+    cursorStyle: t?.cursorStyle,
+    cursorBlink: t?.cursorBlink,
+    scrollback: t?.scrollback,
+    renderer: t?.renderer
+  }
 
   return (
     <div className="app">
@@ -23,17 +46,52 @@ export function Shell() {
         </div>
       )}
       <div className="app__body">
-        <TerminalView
-          key={project.path}
-          kind="main"
-          cwd={project.path}
-          fontFamily={t?.fontFamily ?? undefined}
-          fontSize={t?.fontSize}
-          cursorStyle={t?.cursorStyle}
-          cursorBlink={t?.cursorBlink}
-          scrollback={t?.scrollback}
-          renderer={t?.renderer}
-        />
+        <div className="hrow">
+          {openPanel && (
+            <div className="dock-wrap" style={{ width: dockW }} key="dock">
+              <Dock />
+            </div>
+          )}
+          {openPanel && (
+            <Divider
+              key="dv-dock"
+              direction="v"
+              onResize={(d) => setDockW((w) => clamp(w + d, 170, 560))}
+            />
+          )}
+          <div className="term-wrap" key="term">
+            <TerminalView key={project.path} kind="main" {...termProps} />
+          </div>
+          {editorOpen && (
+            <Divider
+              key="dv-editor"
+              direction="v"
+              onResize={(d) => setEditorW((w) => clamp(w - d, 280, 1100))}
+            />
+          )}
+          {editorOpen && (
+            <div className="editor-wrap" style={{ width: editorW }} key="editor">
+              <EditorPane />
+            </div>
+          )}
+        </div>
+        {miniTermOpen && (
+          <Divider
+            key="dv-mini"
+            direction="h"
+            onResize={(d) => setMiniH((h) => clamp(h - d, 100, 600))}
+          />
+        )}
+        {miniTermOpen && (
+          <div className="mini-wrap" style={{ height: miniH }} key="mini">
+            <div className="minit">
+              <div className="minit__bar">mini terminal</div>
+              <div className="minit__body">
+                <TerminalView key={`mini-${project.path}`} kind="mini" {...termProps} />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

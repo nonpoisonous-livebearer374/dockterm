@@ -62,6 +62,9 @@ export type OpenDialogResult = { path: string } | { canceled: true }
 export interface PathReq {
   path: string
 }
+export interface RelPathReq {
+  relPath: string
+}
 
 export interface WatchEvent {
   type: 'add' | 'change' | 'unlink' | 'addDir' | 'unlinkDir'
@@ -69,6 +72,31 @@ export interface WatchEvent {
 }
 export interface WatchBatch {
   events: WatchEvent[]
+}
+
+export interface TreeNode {
+  name: string
+  relPath: string
+  type: 'file' | 'dir'
+}
+
+export type ReadFileResult =
+  | { kind: 'text'; content: string; mtimeMs: number }
+  | { kind: 'binary'; size: number }
+  | { kind: 'too-large'; size: number }
+
+export type WriteFileResult =
+  | { kind: 'ok'; mtimeMs: number }
+  | { kind: 'conflict'; mtimeMs: number }
+
+export interface WriteFileReq {
+  relPath: string
+  content: string
+  expectedMtimeMs: number | null
+}
+export interface RenameReq {
+  fromRelPath: string
+  toRelPath: string
 }
 
 /* -------------------------------- settings -------------------------------- */
@@ -93,6 +121,15 @@ export interface InvokeChannels {
   'project:open': (req: PathReq) => Result<ProjectInfo>
   'project:getRecent': (req: void) => Result<RecentProject[]>
   'project:gitInit': (req: PathReq) => Result<ProjectInfo>
+
+  'fs:readTree': (req: RelPathReq) => Result<TreeNode[]>
+  'fs:readFile': (req: RelPathReq) => Result<ReadFileResult>
+  'fs:writeFile': (req: WriteFileReq) => Result<WriteFileResult>
+  'fs:createFile': (req: RelPathReq) => Result<void>
+  'fs:createDir': (req: RelPathReq) => Result<void>
+  'fs:rename': (req: RenameReq) => Result<void>
+  'fs:delete': (req: RelPathReq) => Result<void>
+  'fs:reveal': (req: RelPathReq) => Result<void>
 }
 
 export interface EventChannels {
@@ -121,7 +158,15 @@ export const INVOKE_CHANNELS: readonly InvokeChannel[] = [
   'project:openDialog',
   'project:open',
   'project:getRecent',
-  'project:gitInit'
+  'project:gitInit',
+  'fs:readTree',
+  'fs:readFile',
+  'fs:writeFile',
+  'fs:createFile',
+  'fs:createDir',
+  'fs:rename',
+  'fs:delete',
+  'fs:reveal'
 ]
 
 /** Runtime allowlist mirrored from `EventChannels`. */
