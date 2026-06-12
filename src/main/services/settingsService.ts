@@ -102,6 +102,15 @@ export function addRecentProject(entry: RecentProject): Settings {
   return getStore().update({ recentProjects, lastProjectPath: entry.path })
 }
 
+/** Clears the remembered project if it matches `path` — used when reopening it
+ * fails so a stale/unwanted last project self-heals instead of reopening forever. */
+export function clearLastProjectIfMatches(path: string): void {
+  const store = getStore()
+  if (store.get().lastProjectPath === path) {
+    store.update({ lastProjectPath: null })
+  }
+}
+
 export function getCheckpoint(projectPath: string): Checkpoint | null {
   return getStore().get().checkpoints[projectPath] ?? null
 }

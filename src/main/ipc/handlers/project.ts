@@ -1,8 +1,13 @@
+import { existsSync } from 'node:fs'
 import { BrowserWindow, dialog } from 'electron'
 import { z } from 'zod'
 import { ok, err } from '@shared/result'
 import { inspectProject, initGitRepo } from '../../services/projectService'
-import { addRecentProject, getSettings } from '../../services/settingsService'
+import {
+  addRecentProject,
+  getSettings,
+  clearLastProjectIfMatches
+} from '../../services/settingsService'
 import { startWatching } from '../../services/watcherService'
 import { setProjectRoot } from '../../services/projectContext'
 import type { Registrar } from '../register'
@@ -30,11 +35,15 @@ export function registerProjectHandlers(reg: Registrar): void {
       if (win) startWatching(info.path, win)
       return ok(info)
     } catch (e) {
+      // If the remembered project can no longer be opened, stop reopening it.
+      clearLastProjectIfMatches(req.path)
       return err('NOT_FOUND', e instanceof Error ? e.message : 'Cannot open project')
     }
   })
 
-  reg('project:getRecent', z.void(), () => ok(getSettings().recentProjects))
+  reg('project:getRecent', z.void(), () =>
+    ok(getSettings().recentProjects.filter((r) => existsSync(r.path)))
+  )
 
   reg('project:gitInit', pathSchema, async (req) => {
     try {
