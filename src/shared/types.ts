@@ -72,3 +72,51 @@ export interface ProjectInfo {
   isGitRepo: boolean
   branch: string | null
 }
+
+/* ---------------------------------- Git ---------------------------------- */
+
+export type GitFileStatus =
+  | 'modified'
+  | 'added'
+  | 'deleted'
+  | 'renamed'
+  | 'copied'
+  | 'typechange'
+  | 'untracked'
+  | 'conflicted'
+
+export interface GitFileEntry {
+  path: string
+  status: GitFileStatus
+  staged: boolean
+  origPath?: string
+}
+
+export interface GitUpstream {
+  remote: string
+  ahead: number
+  behind: number
+}
+
+export type GitRepoState = 'ok' | 'empty' | 'detached' | 'conflicted' | 'not-repo'
+
+export interface GitStatusView {
+  repoState: GitRepoState
+  branch: string | null
+  upstream: GitUpstream | null
+  staged: GitFileEntry[]
+  unstaged: GitFileEntry[]
+  untracked: GitFileEntry[]
+  conflicted: GitFileEntry[]
+  clean: boolean
+}
+
+export interface GitBranches {
+  current: string | null
+  all: string[]
+}
+
+export interface CommitResultView {
+  hash: string
+  summary: string
+}

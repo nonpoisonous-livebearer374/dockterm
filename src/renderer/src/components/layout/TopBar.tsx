@@ -1,5 +1,6 @@
-import { GitBranch, FolderOpen, SquareTerminal } from 'lucide-react'
+import { GitBranch, FolderOpen, SquareTerminal, ArrowUp, ArrowDown } from 'lucide-react'
 import { useAppStore } from '../../state/useAppStore'
+import { useGitStore } from '../../state/useGitStore'
 import { PANELS } from './panels'
 
 export function TopBar() {
@@ -9,6 +10,12 @@ export function TopBar() {
   const togglePanel = useAppStore((s) => s.togglePanel)
   const miniTermOpen = useAppStore((s) => s.miniTermOpen)
   const toggleMini = useAppStore((s) => s.toggleMiniTerm)
+  const status = useGitStore((s) => s.status)
+
+  const dirty = status
+    ? status.staged.length + status.unstaged.length + status.untracked.length + status.conflicted.length
+    : 0
+  const upstream = status?.upstream
 
   return (
     <header className="topbar">
@@ -25,6 +32,27 @@ export function TopBar() {
           <span className="topbar__branch">
             <GitBranch size={12} />
             {project.branch}
+          </span>
+        )}
+        {upstream && (upstream.ahead > 0 || upstream.behind > 0) && (
+          <span className="topbar__sync">
+            {upstream.behind > 0 && (
+              <span>
+                <ArrowDown size={11} />
+                {upstream.behind}
+              </span>
+            )}
+            {upstream.ahead > 0 && (
+              <span>
+                <ArrowUp size={11} />
+                {upstream.ahead}
+              </span>
+            )}
+          </span>
+        )}
+        {status && status.repoState !== 'not-repo' && (
+          <span className={`chip ${dirty > 0 ? 'chip--dirty' : 'chip--clean'}`}>
+            {dirty > 0 ? `${dirty} changed` : 'Clean'}
           </span>
         )}
       </div>

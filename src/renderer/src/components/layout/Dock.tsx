@@ -1,9 +1,15 @@
 import { useAppStore } from '../../state/useAppStore'
 import { FileTree } from '../files/FileTree'
+import { GitPanel } from '../git/GitPanel'
 
 export function Dock() {
   const openPanel = useAppStore((s) => s.openPanel)
   if (!openPanel) return null
 
-  return <aside className="dock">{openPanel === 'files' && <FileTree />}</aside>
+  return (
+    <aside className="dock">
+      {openPanel === 'files' && <FileTree />}
+      {openPanel === 'git' && <GitPanel />}
+    </aside>
+  )
 }

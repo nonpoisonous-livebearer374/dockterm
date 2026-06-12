@@ -11,7 +11,14 @@
  * main-process registry both validate against the runtime allowlists below.
  */
 import type { Result } from './result'
-import type { Settings, ProjectInfo, RecentProject } from './types'
+import type {
+  Settings,
+  ProjectInfo,
+  RecentProject,
+  GitStatusView,
+  GitBranches,
+  CommitResultView
+} from './types'
 
 export interface AppInfo {
   name: string
@@ -99,6 +106,25 @@ export interface RenameReq {
   toRelPath: string
 }
 
+/* ---------------------------------- git ----------------------------------- */
+
+export interface PathsReq {
+  paths: string[]
+}
+export interface CommitReq {
+  message: string
+}
+export interface PushReq {
+  setUpstream?: boolean
+  forceWithLease?: boolean
+}
+export interface BranchReq {
+  name: string
+}
+export interface GitOutput {
+  output: string
+}
+
 /* -------------------------------- settings -------------------------------- */
 
 export type SettingsPatch = Partial<Pick<Settings, 'terminal' | 'editor' | 'ui' | 'git' | 'claude'>>
@@ -130,6 +156,19 @@ export interface InvokeChannels {
   'fs:rename': (req: RenameReq) => Result<void>
   'fs:delete': (req: RelPathReq) => Result<void>
   'fs:reveal': (req: RelPathReq) => Result<void>
+
+  'git:status': (req: void) => Result<GitStatusView>
+  'git:stage': (req: PathsReq) => Result<void>
+  'git:stageAll': (req: void) => Result<void>
+  'git:unstage': (req: PathsReq) => Result<void>
+  'git:discard': (req: PathsReq) => Result<void>
+  'git:commit': (req: CommitReq) => Result<CommitResultView>
+  'git:push': (req: PushReq) => Result<GitOutput>
+  'git:pull': (req: void) => Result<GitOutput>
+  'git:branches': (req: void) => Result<GitBranches>
+  'git:createBranch': (req: BranchReq) => Result<void>
+  'git:switchBranch': (req: BranchReq) => Result<void>
+  'git:deleteBranch': (req: BranchReq) => Result<void>
 }
 
 export interface EventChannels {
@@ -166,7 +205,19 @@ export const INVOKE_CHANNELS: readonly InvokeChannel[] = [
   'fs:createDir',
   'fs:rename',
   'fs:delete',
-  'fs:reveal'
+  'fs:reveal',
+  'git:status',
+  'git:stage',
+  'git:stageAll',
+  'git:unstage',
+  'git:discard',
+  'git:commit',
+  'git:push',
+  'git:pull',
+  'git:branches',
+  'git:createBranch',
+  'git:switchBranch',
+  'git:deleteBranch'
 ]
 
 /** Runtime allowlist mirrored from `EventChannels`. */

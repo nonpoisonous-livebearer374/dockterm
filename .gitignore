@@ -35,3 +35,6 @@ playwright-report/
 # DockTerm local caches (relocated off full C: during development)
 dt-tmp/
 dt-cache/
+
+# Ad-hoc diagnostic scripts
+scripts/_*.mjs

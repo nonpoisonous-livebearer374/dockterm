@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { GitBranchPlus } from 'lucide-react'
 import { useAppStore } from '../../state/useAppStore'
 import { useEditorStore } from '../../state/useEditorStore'
+import { useGitStore } from '../../state/useGitStore'
 import { TopBar } from './TopBar'
 import { Dock } from './Dock'
 import { Divider } from './Divider'
@@ -21,6 +22,26 @@ export function Shell() {
   const [dockW, setDockW] = useState(260)
   const [editorW, setEditorW] = useState(520)
   const [miniH, setMiniH] = useState(200)
+
+  const projectPath = project?.path
+
+  useEffect(() => {
+    if (!projectPath) return
+    void useGitStore.getState().refresh()
+    void useGitStore.getState().refreshBranches()
+  }, [projectPath])
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined
+    const off = window.dockterm.on('fs:watch', () => {
+      if (timer) clearTimeout(timer)
+      timer = setTimeout(() => void useGitStore.getState().refresh(), 400)
+    })
+    return () => {
+      off()
+      if (timer) clearTimeout(timer)
+    }
+  }, [])
 
   if (!project) return null
   const t = settings?.terminal
