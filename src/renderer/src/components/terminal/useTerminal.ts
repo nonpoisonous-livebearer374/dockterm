@@ -19,7 +19,6 @@ export interface TerminalOptions {
   cursorStyle?: 'block' | 'underline' | 'bar'
   cursorBlink?: boolean
   scrollback?: number
-  /** 'auto' tries WebGL then falls back to the DOM renderer; 'dom' forces DOM. */
   renderer?: 'auto' | 'dom'
 }
 
@@ -29,20 +28,16 @@ export interface TerminalHandle {
   findPrevious: (query: string) => void
   clearSearch: () => void
   focus: () => void
+  /** Write text into the PTY (queued until the session is ready). No newline added. */
+  paste: (text: string) => void
 }
 
-/**
- * Owns one xterm.js instance bound to one PTY session in the main process.
- *
- * Output path: `pty:data` -> term.write(data, ack) -> `pty:ack` (drives the
- * main-process watermark flow control). Input path: term.onData -> `pty:write`.
- * Initial shell output that arrives before `pty:create` resolves is buffered and
- * replayed so the first prompt is never lost.
- */
 export function useTerminal(options: TerminalOptions): TerminalHandle {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const searchRef = useRef<SearchAddon | null>(null)
   const termRef = useRef<Terminal | null>(null)
+  const sessionIdRef = useRef<string | null>(null)
+  const pasteQueueRef = useRef('')
   const optsRef = useRef(options)
   optsRef.current = options
 
@@ -75,7 +70,7 @@ export function useTerminal(options: TerminalOptions): TerminalHandle {
       term.loadAddon(unicode)
       term.unicode.activeVersion = '11'
     } catch {
-      // proposed API unavailable; default unicode handling is fine
+      // proposed API unavailable
     }
 
     term.open(container)
@@ -86,59 +81,56 @@ export function useTerminal(options: TerminalOptions): TerminalHandle {
         webgl.onContextLoss(() => webgl.dispose())
         term.loadAddon(webgl)
       } catch {
-        // WebGL unavailable (e.g. lost context, headless) -> DOM renderer stays
+        // WebGL unavailable -> DOM renderer
       }
     }
 
     try {
       fit.fit()
     } catch {
-      // container not laid out yet
+      // not laid out yet
     }
 
-    let sessionId: string | null = null
     let exited = false
     const pending: PtyDataEvent[] = []
 
     const writeChunk = (data: string): void => {
       term.write(data, () => {
-        if (sessionId) {
-          void window.dockterm.invoke('pty:ack', {
-            sessionId,
-            bytes: encoder.encode(data).length
-          })
+        const id = sessionIdRef.current
+        if (id) {
+          void window.dockterm.invoke('pty:ack', { sessionId: id, bytes: encoder.encode(data).length })
         }
       })
     }
 
     const offData = window.dockterm.on('pty:data', (e) => {
-      if (sessionId === null) {
+      if (sessionIdRef.current === null) {
         pending.push(e)
         return
       }
-      if (e.sessionId === sessionId) writeChunk(e.data)
+      if (e.sessionId === sessionIdRef.current) writeChunk(e.data)
     })
     const offExit = window.dockterm.on('pty:exit', (e) => {
-      if (e.sessionId === sessionId) {
+      if (e.sessionId === sessionIdRef.current) {
         exited = true
         term.writeln(`\r\n\x1b[2m[shell exited with code ${e.exitCode}]\x1b[0m`)
       }
     })
 
     const dataSub = term.onData((d) => {
-      if (sessionId && !exited) {
-        void window.dockterm.invoke('pty:write', { sessionId, data: d })
-      }
+      const id = sessionIdRef.current
+      if (id && !exited) void window.dockterm.invoke('pty:write', { sessionId: id, data: d })
     })
     const resizeSub = term.onResize(({ cols, rows }) => {
-      if (sessionId) void window.dockterm.invoke('pty:resize', { sessionId, cols, rows })
+      const id = sessionIdRef.current
+      if (id) void window.dockterm.invoke('pty:resize', { sessionId: id, cols, rows })
     })
 
     const observer = new ResizeObserver(() => {
       try {
         fit.fit()
       } catch {
-        // hidden / zero-size container
+        // hidden container
       }
     })
     observer.observe(container)
@@ -150,11 +142,18 @@ export function useTerminal(options: TerminalOptions): TerminalHandle {
           term.writeln(`\x1b[31mFailed to start shell: ${res.error.message}\x1b[0m`)
           return
         }
-        sessionId = res.value.sessionId
+        sessionIdRef.current = res.value.sessionId
         for (const e of pending) {
-          if (e.sessionId === sessionId) writeChunk(e.data)
+          if (e.sessionId === sessionIdRef.current) writeChunk(e.data)
         }
         pending.length = 0
+        if (pasteQueueRef.current) {
+          void window.dockterm.invoke('pty:write', {
+            sessionId: sessionIdRef.current,
+            data: pasteQueueRef.current
+          })
+          pasteQueueRef.current = ''
+        }
         term.focus()
       })
 
@@ -164,7 +163,8 @@ export function useTerminal(options: TerminalOptions): TerminalHandle {
       dataSub.dispose()
       resizeSub.dispose()
       observer.disconnect()
-      if (sessionId) void window.dockterm.invoke('pty:kill', { sessionId })
+      if (sessionIdRef.current) void window.dockterm.invoke('pty:kill', { sessionId: sessionIdRef.current })
+      sessionIdRef.current = null
       term.dispose()
       termRef.current = null
       searchRef.current = null
@@ -193,6 +193,11 @@ export function useTerminal(options: TerminalOptions): TerminalHandle {
     },
     focus: () => {
       termRef.current?.focus()
+    },
+    paste: (text) => {
+      const id = sessionIdRef.current
+      if (id) void window.dockterm.invoke('pty:write', { sessionId: id, data: text })
+      else pasteQueueRef.current += text
     }
   }
 }

@@ -4,6 +4,7 @@ import { GitPanel } from '../git/GitPanel'
 import { ReviewPanel } from '../review/ReviewPanel'
 import { McpPanel } from '../mcp/McpPanel'
 import { SkillsPanel } from '../skills/SkillsPanel'
+import { ProjectInfoPanel } from '../info/ProjectInfoPanel'
 
 export function Dock() {
   const openPanel = useAppStore((s) => s.openPanel)
@@ -16,6 +17,7 @@ export function Dock() {
       {openPanel === 'review' && <ReviewPanel />}
       {openPanel === 'mcp' && <McpPanel />}
       {openPanel === 'skills' && <SkillsPanel />}
+      {openPanel === 'info' && <ProjectInfoPanel />}
     </aside>
   )
 }

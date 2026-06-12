@@ -132,6 +132,22 @@ export type SkillTemplate =
   | 'safe-commit'
   | 'blank'
 
+/* ------------------------------ Project info ----------------------------- */
+
+export interface ProjectScript {
+  name: string
+  command: string
+}
+
+export interface ProjectInfoData {
+  name: string | null
+  root: string
+  packageManager: string | null
+  scripts: ProjectScript[]
+  frameworks: string[]
+  remote: string | null
+}
+
 /* ---------------------------------- Git ---------------------------------- */
 
 export type GitFileStatus =

@@ -10,6 +10,7 @@ import { registerFsHandlers } from './handlers/fs'
 import { registerGitHandlers } from './handlers/git'
 import { registerReviewHandlers } from './handlers/review'
 import { registerClaudeHandlers } from './handlers/claude'
+import { registerInfoHandlers } from './handlers/info'
 
 /**
  * A registrar binds one channel to one zod schema and one handler. Every call is:
@@ -48,4 +49,5 @@ export function registerIpc(): void {
   registerGitHandlers(reg)
   registerReviewHandlers(reg)
   registerClaudeHandlers(reg)
+  registerInfoHandlers(reg)
 }

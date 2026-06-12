@@ -9,6 +9,7 @@ interface AppState {
   recent: RecentProject[]
   openPanel: PanelId | null
   miniTermOpen: boolean
+  paletteOpen: boolean
   busy: boolean
   error: string | null
 
@@ -19,6 +20,8 @@ interface AppState {
   togglePanel: (panel: PanelId) => void
   setOpenPanel: (panel: PanelId | null) => void
   toggleMiniTerm: () => void
+  setMiniTermOpen: (open: boolean) => void
+  setPaletteOpen: (open: boolean) => void
   updatePreferences: (patch: SettingsPatch) => Promise<void>
 }
 
@@ -29,6 +32,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   recent: [],
   openPanel: null,
   miniTermOpen: false,
+  paletteOpen: false,
   busy: false,
   error: null,
 
@@ -83,6 +87,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   togglePanel: (panel) => set((s) => ({ openPanel: s.openPanel === panel ? null : panel })),
   setOpenPanel: (panel) => set({ openPanel: panel }),
   toggleMiniTerm: () => set((s) => ({ miniTermOpen: !s.miniTermOpen })),
+  setMiniTermOpen: (open) => set({ miniTermOpen: open }),
+  setPaletteOpen: (open) => set({ paletteOpen: open }),
 
   updatePreferences: async (patch) => {
     const res = await window.dockterm.invoke('settings:set', patch)

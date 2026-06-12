@@ -25,7 +25,8 @@ import type {
   CheckpointStatus,
   McpReadResult,
   SkillsReadResult,
-  SkillTemplate
+  SkillTemplate,
+  ProjectInfoData
 } from './types'
 
 export interface AppInfo {
@@ -191,6 +192,9 @@ export interface InvokeChannels {
     kind: 'skill' | 'command'
     template: SkillTemplate
   }) => Result<{ relPath: string }>
+
+  'info:get': (req: void) => Result<ProjectInfoData>
+  'app:openExternal': (req: { url: string }) => Result<void>
 }
 
 export interface EventChannels {
@@ -247,7 +251,9 @@ export const INVOKE_CHANNELS: readonly InvokeChannel[] = [
   'claude:mcpRead',
   'claude:mcpCreateTemplate',
   'claude:skillsRead',
-  'claude:skillCreate'
+  'claude:skillCreate',
+  'info:get',
+  'app:openExternal'
 ]
 
 /** Runtime allowlist mirrored from `EventChannels`. */

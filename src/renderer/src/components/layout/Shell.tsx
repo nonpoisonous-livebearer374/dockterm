@@ -8,6 +8,7 @@ import { TopBar } from './TopBar'
 import { Dock } from './Dock'
 import { Divider } from './Divider'
 import { TerminalView } from '../terminal/TerminalView'
+import { MiniTerminal } from '../terminal/MiniTerminal'
 import { EditorPane } from '../editor/EditorPane'
 import { DiffView } from '../review/DiffView'
 
@@ -112,7 +113,7 @@ export function Shell() {
             <div className="minit">
               <div className="minit__bar">mini terminal</div>
               <div className="minit__body">
-                <TerminalView key={`mini-${project.path}`} kind="mini" {...termProps} />
+                <MiniTerminal key={`mini-${project.path}`} kind="mini" {...termProps} />
               </div>
             </div>
           </div>
