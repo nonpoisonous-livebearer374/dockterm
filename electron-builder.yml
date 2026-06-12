@@ -6,6 +6,7 @@ copyright: Copyright © 2026 DockTerm contributors
 # so electron-builder must not try to recompile it (its bundled winpty source
 # build is broken on Windows). Linux has no prebuild and is rebuilt in CI.
 npmRebuild: false
+afterPack: build/afterPack.cjs
 
 directories:
   buildResources: build
@@ -23,7 +24,6 @@ win:
   target:
     - target: nsis
       arch: [x64]
-  icon: build/icon.ico
   artifactName: ${productName}-${version}-windows-${arch}.${ext}
 
 nsis:
@@ -37,7 +37,6 @@ mac:
     - target: dmg
       arch: [arm64, x64]
   category: public.app-category.developer-tools
-  icon: build/icon.icns
   identity: null
   artifactName: ${productName}-${version}-mac-${arch}.${ext}
 

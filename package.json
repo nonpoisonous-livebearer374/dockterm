@@ -32,6 +32,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@electron/fuses": "^2.1.2",
     "@electron/rebuild": "^4.0.4",
     "@playwright/test": "^1.60.0",
     "@testing-library/jest-dom": "^6.9.1",
