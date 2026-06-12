@@ -5,6 +5,7 @@ import { ReviewPanel } from '../review/ReviewPanel'
 import { McpPanel } from '../mcp/McpPanel'
 import { SkillsPanel } from '../skills/SkillsPanel'
 import { ProjectInfoPanel } from '../info/ProjectInfoPanel'
+import { SettingsPanel } from '../settings/SettingsPanel'
 
 export function Dock() {
   const openPanel = useAppStore((s) => s.openPanel)
@@ -18,6 +19,7 @@ export function Dock() {
       {openPanel === 'mcp' && <McpPanel />}
       {openPanel === 'skills' && <SkillsPanel />}
       {openPanel === 'info' && <ProjectInfoPanel />}
+      {openPanel === 'settings' && <SettingsPanel />}
     </aside>
   )
 }

@@ -1385,3 +1385,117 @@
 .info-script__run {
   flex: 0 0 auto;
 }
+
+/* ------------------------------- Settings -------------------------------- */
+.settings-section {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.settings-section__title {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.settings-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 0;
+}
+.settings-field__label {
+  font-size: 12.5px;
+  color: var(--text-dim);
+}
+.settings-field__control {
+  flex: 0 0 auto;
+}
+.settings-input {
+  width: 150px;
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 5px;
+  padding: 5px 8px;
+  color: var(--text);
+  font-size: 12px;
+  font-family: var(--font-mono);
+  outline: none;
+}
+.settings-num {
+  width: 64px;
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 5px;
+  padding: 5px 8px;
+  color: var(--text);
+  font-size: 12px;
+  outline: none;
+}
+.settings-select {
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 5px;
+  padding: 5px 8px;
+  color: var(--text);
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+}
+.settings-input:focus,
+.settings-num:focus,
+.settings-select:focus {
+  border-color: var(--accent);
+}
+.settings-accents {
+  display: flex;
+  gap: 8px;
+}
+.settings-accent {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+.settings-accent.is-active {
+  border-color: var(--bg);
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 3px currentColor;
+}
+.settings-note {
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+.toggle {
+  width: 34px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--border-strong);
+  border: none;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s var(--ease);
+  padding: 0;
+}
+.toggle--on {
+  background: var(--accent);
+}
+.toggle__knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.15s var(--ease);
+}
+.toggle--on .toggle__knob {
+  left: 18px;
+}

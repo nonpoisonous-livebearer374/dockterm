@@ -39,6 +39,7 @@ export function FileTree() {
   const openFile = useEditorStore((s) => s.open)
   const closeTab = useEditorStore((s) => s.close)
   const projectName = useAppStore((s) => s.project?.name ?? 'Files')
+  const confirmDanger = useAppStore((s) => s.settings?.git.confirmDanger ?? true)
   const confirm = useDialogStore((s) => s.confirm)
   const prompt = useDialogStore((s) => s.prompt)
   const toast = useToastStore((s) => s.push)
@@ -141,16 +142,18 @@ export function FileTree() {
   }
 
   const deleteNode = async (node: TreeNode) => {
-    const confirmed = await confirm({
-      title: `Delete ${node.type}`,
-      message: `Move "${node.name}" to the trash?`,
-      detail:
-        node.type === 'dir' ? 'The folder and everything inside it goes to the trash.' : undefined,
-      confirmLabel: 'Move to Trash',
-      danger: true,
-      command: `trash ${node.relPath}`
-    })
-    if (!confirmed) return
+    if (confirmDanger) {
+      const confirmed = await confirm({
+        title: `Delete ${node.type}`,
+        message: `Move "${node.name}" to the trash?`,
+        detail:
+          node.type === 'dir' ? 'The folder and everything inside it goes to the trash.' : undefined,
+        confirmLabel: 'Move to Trash',
+        danger: true,
+        command: `trash ${node.relPath}`
+      })
+      if (!confirmed) return
+    }
     const res = await window.dockterm.invoke('fs:delete', { relPath: node.relPath })
     if (!res.ok) {
       toast(res.error.message, 'error')
