@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
 import './styles/tokens.css'
@@ -8,8 +7,10 @@ import './styles/components.css'
 const container = document.getElementById('root')
 if (!container) throw new Error('Root container missing')
 
-createRoot(container).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-)
+// NB: intentionally NOT wrapped in <StrictMode>. In development StrictMode
+// double-invokes effects, which mounts the terminal twice — that spawns a second
+// PTY and immediately kills it, and on Windows the node-pty ConPTY kill path forks
+// a console-list helper that can throw "AttachConsole failed" and crash the main
+// process. The effects here own real OS resources (shells, watchers), so the
+// double-invoke is actively harmful rather than a useful check.
+createRoot(container).render(<App />)

@@ -1,15 +1,34 @@
 export const APP_NAME = 'DockTerm'
 export const APP_ID = 'com.dockterm.app'
 
-/** Directories and files never shown in the file tree or walked by the watcher. */
+/**
+ * Directories and files never shown in the file tree or walked by the watcher.
+ * Skipping heavy dependency/build/cache dirs keeps the watcher's initial scan
+ * cheap even on large projects (a full node_modules can be tens of thousands of
+ * files), so the main process never stalls on startup.
+ */
 export const IGNORED_ENTRIES: readonly string[] = [
   'node_modules',
   '.git',
   'dist',
   'build',
+  'out',
   '.next',
+  '.nuxt',
+  '.svelte-kit',
   '.turbo',
+  '.cache',
+  '.parcel-cache',
   'coverage',
+  '.venv',
+  'venv',
+  '__pycache__',
+  '.pytest_cache',
+  'target',
+  'vendor',
+  '.gradle',
+  '.idea',
+  'Pods',
   '.DS_Store'
 ]
 
