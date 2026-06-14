@@ -49,20 +49,32 @@ jobs:
         # env is only injected on macOS runners so it can never be mistaken for a
         # Windows signing cert.
         run: |
-          if [ -n "$APPLE_ID" ]; then
-            echo "Apple credentials present — signing + notarizing macOS build"
-            npx --no-install electron-builder ${{ matrix.args }} --publish always -c.mac.notarize=true
+          set -e
+          ARGS="${{ matrix.args }}"
+          if [ -n "$APPLE_API_KEY_ID" ]; then
+            echo "Notarizing via App Store Connect API key (preferred)"
+            mkdir -p "$HOME/private_keys"
+            printf '%s' "$APPLE_API_KEY_P8" > "$HOME/private_keys/AuthKey.p8"
+            export APPLE_API_KEY="$HOME/private_keys/AuthKey.p8"
+            npx --no-install electron-builder $ARGS --publish always -c.mac.notarize=true
+          elif [ -n "$APPLE_ID" ]; then
+            echo "Notarizing via Apple ID + app-specific password"
+            npx --no-install electron-builder $ARGS --publish always -c.mac.notarize=true
           else
             echo "No Apple credentials — building unsigned"
             export CSC_IDENTITY_AUTO_DISCOVERY=false
-            npx --no-install electron-builder ${{ matrix.args }} --publish always
+            npx --no-install electron-builder $ARGS --publish always
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Mac-only: Developer ID cert (.p12 → base64) + its password.
           CSC_LINK: ${{ startsWith(matrix.os, 'macos') && secrets.CSC_LINK || '' }}
           CSC_KEY_PASSWORD: ${{ startsWith(matrix.os, 'macos') && secrets.CSC_KEY_PASSWORD || '' }}
-          # Mac-only: Apple notarization credentials.
+          # Mac-only, preferred: App Store Connect API key (more reliable in CI).
+          APPLE_API_KEY_P8: ${{ startsWith(matrix.os, 'macos') && secrets.APPLE_API_KEY_P8 || '' }}
+          APPLE_API_KEY_ID: ${{ startsWith(matrix.os, 'macos') && secrets.APPLE_API_KEY_ID || '' }}
+          APPLE_API_ISSUER: ${{ startsWith(matrix.os, 'macos') && secrets.APPLE_API_ISSUER || '' }}
+          # Mac-only, fallback: Apple ID + app-specific password.
           APPLE_ID: ${{ startsWith(matrix.os, 'macos') && secrets.APPLE_ID || '' }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ startsWith(matrix.os, 'macos') && secrets.APPLE_APP_SPECIFIC_PASSWORD || '' }}
           APPLE_TEAM_ID: ${{ startsWith(matrix.os, 'macos') && secrets.APPLE_TEAM_ID || '' }}
